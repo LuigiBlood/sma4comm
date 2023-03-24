@@ -10,10 +10,6 @@
 #include <string.h>
 #include "sma4e.h"
 
-#include "level_bin.h"
-#include "power_bin.h"
-#include "demo_bin.h"
-
 #include "cardCollection.h"//Trying to compile? Run the Card Collection Compiler in the tools folder to create this file.
 
 
@@ -301,12 +297,12 @@ int main(void) {
 						break;
 					case SMA4E_COMM_ID_USA:
 					
-						sendArrayAndChecksum(gameID, 4, 0);//Two bytes, 0x5841 and 0x4534. AX4E with endian order swapped? 
+						sendArrayAndChecksum((u16*)gameID, 4, 0);//Two bytes, 0x5841 and 0x4534. AX4E with endian order swapped? 
 						debugWord = debugWord + 1;
 						debugCode = 2;
 						break;
 					case SMA4E_COMM_ID_FRA:
-						sendArrayAndChecksum(gameID, 4, 0);
+						sendArrayAndChecksum((u16*)gameID, 4, 0);
 						debugCode = 3;
 						break;
 					case 0x5841://Seperate from default just so it doesn't use the debugCode errors.
