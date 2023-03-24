@@ -10,10 +10,12 @@ namespace Card_Collection_Compiler
     internal class Program
     {
         private static string renameOutput = "";
+        static long totalBytes = 0;
         static void generatePointerCode(string location, ref string classCode, string variableName)
         {
             string[] files = Directory.GetFiles(location, "*.bin", SearchOption.AllDirectories);
             bool[] needsOffset = new bool[files.Length];
+            
             for (var i = 0; i < files.Length; i++)
             {
                 var f = Path.GetFileNameWithoutExtension(files[i]);
@@ -28,6 +30,7 @@ namespace Card_Collection_Compiler
 
 
                 }
+                totalBytes += new FileInfo(files[i]).Length;
 
             }
             foreach (string file in files)
@@ -121,8 +124,14 @@ namespace Card_Collection_Compiler
                     ";
 
             }*/
+            if (totalBytes > 158058)//Todo: Update this to reflect the general output via the makefile rather than be in this code.
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("\nWARNING: ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Total byte count for cards is close to or over the limit for multiboot cartridges. Consider testing in an emulator if makefile compiles successfully.\n(If compiling to non-multiboot, ignore the above message)");
+            }
 
-            
             File.WriteAllText("sample.c", classCode);
             if (File.Exists(backoutCode + "source/cardCollection.h"))
             {
