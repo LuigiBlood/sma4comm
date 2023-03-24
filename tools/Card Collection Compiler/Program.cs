@@ -92,7 +92,7 @@ namespace Card_Collection_Compiler
 
             return filename.Replace("-", "_").Replace(".", "_").Replace(" ", "").Replace("'", "").Replace("(", "").Replace(")", "");
         }
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             Console.Write("Generating cardCollection.h ... ");
             renameOutput = "";
@@ -130,6 +130,7 @@ namespace Card_Collection_Compiler
             }
             File.Move("sample.c", backoutCode + "source/cardCollection.h");
             Console.WriteLine("Done!");
+            return 0;
             //}
         }
         static string GetFolderAndFileFromPath(string fullPath)

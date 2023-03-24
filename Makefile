@@ -2,9 +2,6 @@
 .SUFFIXES:
 #---------------------------------------------------------------------------------
 
-run_ccc:
-	"tools\Card Collection Compiler\bin\Release\Card Collection Compiler.exe" "-makefile"
-
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
@@ -120,7 +117,7 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
  
 #---------------------------------------------------------------------------------
 $(BUILD):
-	run_ccc
+	"tools\Card Collection Compiler\bin\Release\Card Collection Compiler.exe" "-makefile"
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) BUILDDIR=`cd $(BUILD) && pwd` --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
