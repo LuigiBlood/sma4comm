@@ -49,17 +49,12 @@ void serialIRQ() {
 	//Send
 	if (isDataSent > 0)
 	{
-		//u16 tmp = isDataSent;
 		isDataSent--;
 		REG_SIOMLT_SEND = sendData;
 		if (isDataSent > 0)
 		{
 			IntrWait(0, IRQ_SERIAL);
 		}
-		/*for (u16 i = 0; i < tmp; i++)
-		{
-			IntrWait(0, IRQ_SERIAL);
-		}*/
 		
 		
 		
@@ -211,14 +206,14 @@ int main(void) {
 			}
 			if (pDCI != dotCodeIndex)
 			{
-				iprintf("\x1b[2J");//consoleCls();
+				iprintf("\x1b[2J");//Clear the console.
 			}
 			if (keys_pressed & KEY_A)
 			{
 				mode = 0;
 				debugCode = 0;
 				
-				iprintf("\x1b[2J");//consoleCls();
+				iprintf("\x1b[2J");//Clear the console.
 				
 				resetIRQ();
 				
@@ -249,17 +244,10 @@ int main(void) {
 					break;
 				}//
 				
-				sprintf(strText,"\x1b[%s;0H%s:%s",y[i],moniker[i],value);//,maxDC,wrapAround(dotCodeIndex,maxDC),dotCodeIndex);
+				sprintf(strText,"\x1b[%s;0H%s:%s",y[i],moniker[i],value);
 				iprintf(strText);
 				iprintf("\x1b[7;0HChoose dot-code to be scanned.\nPress A to lock it in for sending.");
-				//,maxDC,wrapAround(dotCodeIndex,maxDC),dotCodeIndex);
-				/*for (int a = 0; a < sizeof(strText)/sizeof(strText[0]); a++)
-				{
-					if (strText[a] == "")
-					{
-						strText[a] = " ";//Whitespace out leftover text.
-					}
-				}*/
+				
 				
 				}
 			}
@@ -271,29 +259,14 @@ int main(void) {
 		
 		sprintf(strText, "\x1b[12;12HS:%04X\n", sendData);
 		iprintf(strText);
-		//registerToLog(strText,debugLog,prevWord);
 		sprintf(strText, "\x1b[13;13HR:%04X\n", recvData);
 		iprintf(strText);
-		//registerToLog(strText,debugLog,prevWord);
 		sprintf(strText, "\x1b[14;14HF:%04X\n", (int)frameCounter);
 		iprintf(strText);
-		//registerToLog(strText,debugLog,prevWord);
 		sprintf(strText, "\x1b[15;15HE:%04X\n", debugCode);
 		iprintf(strText);
 		sprintf(strText, "\x1b[16;16HM:%04X\n", mode);
 		iprintf(strText);
-		//registerToLog(strText,debugLog,prevWord);
-		
-		//sprintf(strText,"\x1b[0;0HL:%s\n", debugLog);
-		//iprintf(strText);
-		
-		
-		/* for (int i = 0; i < 5; i++) {
-        printf("Address of levelTable[%d]: %p\n", i, (void*)levelTable[i]);
-		}*/
-		
-		
-		//prevWord = recvWord();
 		
 		if (!_ignoreVBlank)
 		{
@@ -310,16 +283,15 @@ int main(void) {
 			{
 				switch (recvWord())
 				{
-					case SMA4E_COMM_REPEATPLEASE://Hardware only.
+					case SMA4E_COMM_REPEATPLEASE://Hardware only. Repeat the last word unless not initialized.
 						if (initialized)
 						{
-							isDataSent = 1;//Keep delaying if they call FFFF.
+							isDataSent = 1;//Keep delaying if they call FFFF while initialized.
 						}
 						else
 						{
 							sendWord(SMA4E_COMM_ID_USA);
 						}
-						//sendWord(0);
 					break;
 					case SMA4E_COMM_CONNECT:
 					case SMA4E_COMM_RECONNECT:
@@ -329,47 +301,15 @@ int main(void) {
 						break;
 					case SMA4E_COMM_ID_USA:
 					
-						//sendWord(*(u16*)gameID);
 						sendArrayAndChecksum(gameID, 4, 0);//Two bytes, 0x5841 and 0x4534. AX4E with endian order swapped? 
 						debugWord = debugWord + 1;
 						debugCode = 2;
-						//frameCounter = 2;
 						break;
 					case SMA4E_COMM_ID_FRA:
-						//sendWord(*(u16*)gameID);
 						sendArrayAndChecksum(gameID, 4, 0);
 						debugCode = 3;
 						break;
-					case 0x5841://Don't know why... Lakitu Status request?
-					//case 0x4534:
-						/*if (debugCode > 0)
-						{
-							if (debugCode < 0xE0)
-							{
-								debugCode = debugCode + 0xE0;
-							}
-							sendArrayAndChecksum(gameID, 4, 0);//sendWord(recvWord());
-						}*/
-						/*
-						0x5841,
-0xFBFB,
-0x4534,Matches the commented code, but why does it fail???
-0xF3F3
-4 possible answers. Unlikely the first since why would we resend the protocol when we already have on connect?
-						*/
-						//sendWord(*(u16*)(gameID+2));
-						//sendWord(recvWord());//sendArrayAndChecksum(recvWord(), 4, 0);
-						//sendArrayAndChecksum(gameID+2, 4, 0);
-						//sendArrayAndChecksum(SMA4E_COMM_ID_ENG,4,0);
-						
-						//sendWord(debugWord);//*(u16*)(gameID+2));
-						//sendWord(SMA4E_COMM_ID_USA);
-					/*if (debugCode == 2)
-					{
-						sendWord(*(u16*)(gameID+2));
-					}
-						debugCode = 8;*/
-						//sendWord(0x5841);//*(u16*)(gameID+2));//0xF3F3);//0x4534);//*(u16*)(gameID+2));
+					case 0x5841://Seperate from default just so it doesn't use the debugCode errors.
 						break;
 						
 					case SMA4E_COMM_REQ_LVL:
@@ -399,7 +339,6 @@ int main(void) {
 						sendWord(SMA4E_COMM_ID_USA);
 					break;
 					default:
-						//sendWord(0);
 						if (debugCode < 0x90)
 						{
 							debugCode = debugCode + 0x90;
