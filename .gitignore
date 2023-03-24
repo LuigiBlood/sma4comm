@@ -1,0 +1,16 @@
+# files listed here will not be committed.
+build/*
+levels/*.bin
+powerups/*.bin
+demos/*.bin
+build
+workshop/*
+workshop
+!levels/level_sample.bin
+!powerups/power_sample.bin
+!demos/demo_sample.bin
+*.elf
+*.gba
+*.sa2
+*.sav
+source/cardCollection.h
