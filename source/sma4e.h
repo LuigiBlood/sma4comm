@@ -55,4 +55,6 @@
 #define SMA4E_COMM_RECV_GOOD	0xF5F5	//Good Data Received
 #define SMA4E_COMM_RECV_BAD	0xF4F4	//Bad Data Received
 
+#define SMA4E_COMM_REPEATPLEASE 0xFFFF	//Only used in hardware, seems to succeed if you just resend the previous data (except before transmission has begun).
+
 #endif

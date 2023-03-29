@@ -24,10 +24,10 @@ TARGET		:= $(notdir $(CURDIR))
 BUILD		:= build
 SOURCES		:= source
 INCLUDES	:= include
-DATA		:= data
+DATA		:= levels powerups demos
 GRAPHICS	:= gfx
 MUSIC		:=
-
+#(data|levels|powerups|demos)
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ LIBDIRS	:=	$(LIBGBA)
 ifneq ($(BUILDDIR), $(CURDIR))
 #---------------------------------------------------------------------------------
  
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
+export OUTPUT	:=	$(CURDIR)/$(TARGET)_mb
  
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
@@ -117,6 +117,7 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
  
 #---------------------------------------------------------------------------------
 $(BUILD):
+	"tools\Card Collection Compiler\bin\Release\Card Collection Compiler.exe" "-makefile"
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) BUILDDIR=`cd $(BUILD) && pwd` --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
